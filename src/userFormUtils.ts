@@ -1,5 +1,5 @@
-import { User } from '../types';
-import { fetchUser, updateUser, createUser } from '../service/api';
+import { User } from './types';
+import { fetchUser, updateUser, createUser } from './service/api';
 import { NavigateFunction } from 'react-router-dom';
 
 export const loadUser = async (
