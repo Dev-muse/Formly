@@ -1,6 +1,6 @@
 # User Management System
 
-This project is a User Management System built with React, TypeScript, and PrimeReact. It allows users to search for existing users, edit their information, and create new users.
+This project is a User Management System built with React, TypeScript, and PrimeReact, using Vite as the build tool.
 
 ## Prerequisites
 
@@ -15,11 +15,11 @@ To install the User Management System, follow these steps:
 
 1. Clone the repository
    ```
-   git clone https://github.com/dev-muse/formly.git
+   git clone https://github.com/dev-muse/Formly.git
    ```
 2. Navigate to the project directory
    ```
-   cd formly
+   cd Formly
    ```
 3. Install the dependencies
    ```
@@ -32,9 +32,9 @@ To use the User Management System, follow these steps:
 
 1. Start the development server
    ```
-   npm start
+   npm run dev
    ```
-2. Open your web browser and visit `http://localhost:3000`
+2. Open your web browser and visit the URL shown in your terminal (typically `http://localhost:5173`)
 
 You should now see the homepage of the User Management System.
 
@@ -63,11 +63,18 @@ To create a production build, run:
 npm run build
 ```
 
-This will create a `build` directory with a production build of your app.
+This will create a `dist` directory with a production build of your app.
+
+To preview the production build locally, you can use:
+
+```
+npm run preview
+```
 
 ## Additional Information
 
-- This project uses [React Router](https://reactrouter.com/) for routing.
+- This project uses [Vite](https://vitejs.dev/) as the build tool.
+- [React Router](https://reactrouter.com/) is used for routing.
 - [PrimeReact](https://www.primefaces.org/primereact/) is used for UI components.
 - [Axios](https://axios-http.com/) is used for making HTTP requests.
 - The backend API is simulated using [DummyJSON](https://dummyjson.com/).
@@ -79,5 +86,10 @@ If you encounter any issues:
 1. Make sure all dependencies are installed correctly
 2. Check if you're using the correct versions of Node.js and npm
 3. Clear your browser cache and restart the development server
+4. Check the Vite configuration in `vite.config.ts` if you're having build issues
 
 If problems persist, please open an issue in the GitHub repository.
+
+## Customizing the Vite Configuration
+
+If you need to customize the Vite configuration, you can do so in the `vite.config.ts` file in the root of your project. Refer to the [Vite documentation](https://vitejs.dev/config/) for more information on available options.
