@@ -1,0 +1,73 @@
+body{
+  font-family: "inter-variable", sans-serif;
+font-variation-settings: "slnt" 0, "wght" 400;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.gap{
+  gap:12px;
+}
+.mt-4{
+  margin-top: 12px;
+}
+.cancel{
+  background-color: black;
+  border: 1px solid black;
+}
+
+.homepage{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1{
+  text-align: center;
+}
+.p-field {
+  margin-bottom: 1rem;
+}
+
+.p-invalid {
+  border-color: #f44336;
+}
+
+.p-error {
+  color: #f44336;
+}
+
+ul{
+  list-style-type: none;
+}
+
+a{
+  text-decoration: none;
+}
+
+.mb-4{
+  margin-bottom: 12px;
+}
+
+.text-start{
+  text-align: start;
+}
+
+
+ .buttons{
+  display: flex;
+  gap:12px;
+ }
+
+ .search-btn{
+  margin: 0 20px 0 5px;
+ }
+
+ .create-page-btn{
+
+  background-color: black;
+  border: 1px solid black
+ }
