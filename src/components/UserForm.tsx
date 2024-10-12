@@ -6,14 +6,20 @@ import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { classNames } from 'primereact/utils';
-import { User, Address } from '../types';
-import { fetchUser, updateUser, createUser } from '../service/api';
+import { User } from '../types';
+import {
+  loadUser,
+  handleInputChange,
+  handleAddressChange,
+  handleSubmit,
+  validateForm,
+} from '../hooks/userFormUtils';
 
 const UserForm: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [user, setUser] = useState<Partial<User>>({
-    address: {} as Address,
+    address: {},
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,103 +27,38 @@ const UserForm: React.FC = () => {
 
   useEffect(() => {
     if (userId && userId !== 'new') {
-      loadUser(parseInt(userId, 10));
+      loadUser(parseInt(userId, 10), setUser, setLoading, setError, navigate);
     }
-  }, [userId]);
+  }, [userId, navigate]);
 
-  const loadUser = async (id: number) => {
-    setLoading(true);
-    try {
-      const userData = await fetchUser(id);
-      setUser(userData);
-      setError(null);
-    } catch (err) {
-      setError('Failed to load user');
-      navigate('/');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-  };
-
-  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUser({
-      ...user,
-      address: {
-        ...user.address,
-        [name]: value,
-      },
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-
-    if (validateForm()) {
-      setLoading(true);
-      try {
-        if (userId && userId !== 'new') {
-          await updateUser(parseInt(userId, 10), user);
-          alert('User updated successfully');
-        } else {
-          await createUser(user);
-          alert('User created successfully');
-        }
-        setError(null);
-        navigate('/');
-      } catch (err) {
-        setError('Failed to save user');
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
-  const validateForm = () => {
-    if (
-      !user.firstName ||
-      !user.lastName ||
-      !user.email ||
-      !user.phone ||
-      !user.username ||
-      !user.age ||
-      !user.height ||
-      !user.weight ||
-      !user.birthDate ||
-      !user.gender ||
-      !user.bloodGroup ||
-      !user.address?.address ||
-      !user.address?.city ||
-      !user.address?.state
-    ) {
-      return false;
-    }
-
-    if (user.age < 18 || user.age > 120) return false;
-    if (user.height < 100 || user.height > 250) return false;
-    if (user.weight < 30 || user.weight > 300) return false;
-
-    return true;
-  };
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleInputChange(e, setUser);
+  const onAddressChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleAddressChange(e, setUser);
+  const onSubmit = (e: React.FormEvent) =>
+    handleSubmit(
+      e,
+      user,
+      userId,
+      setSubmitted,
+      setLoading,
+      setError,
+      navigate,
+      () => validateForm(user)
+    );
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <form onSubmit={handleSubmit} className="p-fluid container">
+    <form onSubmit={onSubmit} className="p-fluid container">
       <div className="p-field">
         <label htmlFor="firstName">First Name*</label>
         <InputText
           id="firstName"
           name="firstName"
           value={user.firstName || ''}
-          onChange={handleInputChange}
+          onChange={onInputChange}
           required
           className={classNames({ 'p-invalid': submitted && !user.firstName })}
         />
@@ -132,7 +73,7 @@ const UserForm: React.FC = () => {
           id="lastName"
           name="lastName"
           value={user.lastName || ''}
-          onChange={handleInputChange}
+          onChange={onInputChange}
           required
           className={classNames({ 'p-invalid': submitted && !user.lastName })}
         />
@@ -147,7 +88,7 @@ const UserForm: React.FC = () => {
           id="email"
           name="email"
           value={user.email || ''}
-          onChange={handleInputChange}
+          onChange={onInputChange}
           required
           className={classNames({ 'p-invalid': submitted && !user.email })}
         />
@@ -162,7 +103,7 @@ const UserForm: React.FC = () => {
           id="phone"
           name="phone"
           value={user.phone || ''}
-          onChange={handleInputChange}
+          onChange={onInputChange}
           required
           className={classNames({ 'p-invalid': submitted && !user.phone })}
         />
@@ -177,7 +118,7 @@ const UserForm: React.FC = () => {
           id="username"
           name="username"
           value={user.username || ''}
-          onChange={handleInputChange}
+          onChange={onInputChange}
           required
           className={classNames({ 'p-invalid': submitted && !user.username })}
         />
@@ -309,7 +250,7 @@ const UserForm: React.FC = () => {
           id="address"
           name="address"
           value={user.address?.address || ''}
-          onChange={handleAddressChange}
+          onChange={onAddressChange}
           required
           className={classNames({
             'p-invalid': submitted && !user.address?.address,
@@ -326,7 +267,7 @@ const UserForm: React.FC = () => {
           id="city"
           name="city"
           value={user.address?.city || ''}
-          onChange={handleAddressChange}
+          onChange={onAddressChange}
           required
           className={classNames({
             'p-invalid': submitted && !user.address?.city,
@@ -337,13 +278,13 @@ const UserForm: React.FC = () => {
         )}
       </div>
 
-      <div className="p-field mb-4">
+      <div className="p-field">
         <label htmlFor="state">State*</label>
         <InputText
           id="state"
           name="state"
           value={user.address?.state || ''}
-          onChange={handleAddressChange}
+          onChange={onAddressChange}
           required
           className={classNames({
             'p-invalid': submitted && !user.address?.state,
@@ -356,7 +297,7 @@ const UserForm: React.FC = () => {
 
       <div
         className="buttons
-      "
+"
       >
         <Button
           type="submit"
